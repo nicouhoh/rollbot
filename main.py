@@ -6,6 +6,10 @@ import os
 import random
 import pymongo
 from pymongo import MongoClient
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 ### bot/ client  class 
 class MyClient(discord.Client):
@@ -136,8 +140,4 @@ class MyClient(discord.Client):
 
 client = MyClient()
 client.run(os.environ['TOKEN'])
-
-        
-    
-
 
