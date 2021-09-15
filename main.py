@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+URI = os.environ['MONGODB_URI']
+db = MongoClient(URI)
 
 ### bot/ client  class 
 class MyClient(discord.Client):
@@ -61,34 +63,34 @@ class MyClient(discord.Client):
         if msg.startswith('/view-sheet'):
 
             player = str(message.author)
-            # keys = list(db.keys())
+            keys = list(db.keys()) # keys does not exist will need new syntax to work with MongoDBClient
 
         # db not working without repl.it db
-        # if player in keys:
-        #     await message.channel.send(dict(db[player]))
+        if player in keys:
+            await message.channel.send(dict(db[player]))
 
         else:
             await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
 
     # delete character player_sheet
 
-        # if msg.startswith('/delete-character'):
-        #     player = str(message.author)
-        #     data = db[player]
+        if msg.startswith('/delete-character'):
+            player = str(message.author)
+            data = db[player]
 
-        # if data:
-        #     await message.channel.send(f"are you sure you want to delete your character {str(data['name'])} - Y / N ")
-        #     answer = await client.wait_for('message')
+        if data:
+            await message.channel.send(f"are you sure you want to delete your character {str(data['name'])} - Y / N ")
+            answer = await client.wait_for('message')
 
-        #     if answer.content.upper() == 'Y':
-        #         await message.channel.send('your character sheet has been destroyed')
-        #         del db[player]
-        #     else:
-        #         await message.channel.send('character not deleted')
-        #         return 
+            if answer.content.upper() == 'Y':
+                await message.channel.send('your character sheet has been destroyed')
+                del db[player]
+            else:
+                await message.channel.send('character not deleted')
+                return 
 
-        # else:
-        #     await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
+        else:
+            await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
 
     ### build character sheet with charsheet class
         if msg.startswith('/create-char'):
@@ -111,7 +113,7 @@ class MyClient(discord.Client):
 
 
         await message.channel.send('Hello Travler')
-        await message.channel.send(player)
+        # await message.channel.send(player)
         for i in player_sheet:
             if i == "name":
                 await message.channel.send('What is your name ?')
@@ -135,8 +137,8 @@ class MyClient(discord.Client):
         ## this line lets us save it under the players discord name in our database. 
         
         #anything calling db is currently not working because of migration off repl.it
-        # db[player] = player_sheet
-        # await message.channel.send(db[f"{player}"])
+        db[player] = player_sheet
+        await message.channel.send(db[f"{player}"])
 
 client = MyClient()
 client.run(os.environ['TOKEN'])
