@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 URI = os.environ['MONGODB_URI']
-db = MongoClient(URI)
+cluster = MongoClient(URI)
+db = cluster["Roll_bot"]
+collection = db["Roll_bot_char_sheets"]
 
 ### bot/ client  class 
 class MyClient(discord.Client):
@@ -64,11 +66,9 @@ class MyClient(discord.Client):
 
             player = str(message.author)
 
-            # keys = list(db.keys()) # keys does not exist will need new syntax to work with MongoDBClient
-
         # db not working without repl.it db
-            if db.find({player}):
-                await message.channel.send(dict(db[player]))
+            if collection.find(player):
+                await message.channel.send(collection.find(player))
 
             else:
                 await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
@@ -128,7 +128,7 @@ class MyClient(discord.Client):
                     player_sheet[i] = 0
                 else:
                     await message.channel.send(f"roll for your {i}")
-                    roll = await client.wait_for('message')
+                    roll = await client.wait_for('message') #occasionally this reads the message from 132 as the wait_for message, need to make this only for message from player who started process. 
                     dice_roll = await self.dice(roll.content, message)
                     player_sheet[i] = dice_roll
 
@@ -136,11 +136,9 @@ class MyClient(discord.Client):
             await message.channel.send('player sheet:')
             ## we can save the player sheet in the repl db or in whatever db we use in the final product
             ## this line lets us save it under the players discord name in our database. 
-            
-            #anything calling db is currently not working because of migration off repl.it
-            # db[player] = player_sheet
-            db.insert_one({str(player): player_sheet})
-            await message.channel.send(db.find({player}))
+
+            collection.insert_one({str(player): player_sheet}) # this did write my object to the db
+            await message.channel.send(collection.find(player)) # this doesn't like to output like this. 
 
 client = MyClient()
 client.run(os.environ['TOKEN'])
