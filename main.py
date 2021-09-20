@@ -13,7 +13,7 @@ load_dotenv()
 URI = os.environ['MONGODB_URI']
 cluster = MongoClient(URI)
 db = cluster["Roll_bot"]
-collection = db["Roll_bot_char_sheets"]
+collection = db["character_sheets"]
 
 ### bot/ client  class 
 class MyClient(discord.Client):
@@ -64,11 +64,11 @@ class MyClient(discord.Client):
         #view player player_sheet
         if msg.startswith('/view-sheet'):
 
-            player = str(message.author)
+            player = str(message.author.name)
 
-        # db not working without repl.it db
-            if collection.find(player):
-                await message.channel.send(collection.find(player))
+            if collection.find_one({"player": player}):
+                sheet = collection.find_one({"player" : player})
+                await message.channel.send(sheet["sheet"])
 
             else:
                 await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
@@ -77,15 +77,14 @@ class MyClient(discord.Client):
 
         if msg.startswith('/delete-character'):
             player = str(message.author)
-            data = db[player]
-
+            data = list(collection.find({}))[0][player] # data is just the parsed out bit and deleteing it wont affect the db
             if data:
                 await message.channel.send(f"are you sure you want to delete your character {str(data['name'])} - Y / N ")
                 answer = await client.wait_for('message')
 
                 if answer.content.upper() == 'Y':
                     await message.channel.send('your character sheet has been destroyed')
-                    del db[player]
+                    # del 
                 else:
                     await message.channel.send('character not deleted')
                     return 
@@ -93,7 +92,7 @@ class MyClient(discord.Client):
             else:
                 await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
 
-    ### build character sheet with charsheet class
+    ### build character sheet 
         if msg.startswith('/create-char'):
 
             player = message.author
@@ -112,9 +111,9 @@ class MyClient(discord.Client):
                 "charisma": 0
             }
 
-
-            await message.channel.send('Hello Travler')
-            # await message.channel.send(player)
+            # need to check if player already has a character 
+            await message.channel.send('Hello Traveler')
+            
             for i in player_sheet:
                 if i == "name":
                     await message.channel.send('What is your name ?')
@@ -134,11 +133,10 @@ class MyClient(discord.Client):
 
             
             await message.channel.send('player sheet:')
-            ## we can save the player sheet in the repl db or in whatever db we use in the final product
-            ## this line lets us save it under the players discord name in our database. 
 
-            collection.insert_one({str(player): player_sheet}) # this did write my object to the db
-            await message.channel.send(collection.find(player)) # this doesn't like to output like this. 
+            collection.insert_one({"player" : str(player.name), "sheet": player_sheet})
+            sheet = collection.find_one({"player" : player.name})
+            await message.channel.send(sheet["sheet"])
 
 client = MyClient()
 client.run(os.environ['TOKEN'])
