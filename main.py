@@ -13,7 +13,7 @@ load_dotenv()
 URI = os.environ['MONGODB_URI']
 cluster = MongoClient(URI)
 db = cluster["Roll_bot"]
-collection = db["Roll_bot_char_sheets"]
+collection = db["character_sheets"]
 
 ### bot/ client  class 
 class MyClient(discord.Client):
@@ -64,16 +64,12 @@ class MyClient(discord.Client):
         #view player player_sheet
         if msg.startswith('/view-sheet'):
 
-            player = str(message.author)
+            player = str(message.author.name)
 
-            # query = collection.find({},{player})
-            # for i in query:
-            #     print(i)
-            if collection.find({}, {player}):
-                sheet = collection.find({}, {player})
-                char_sheet = list(sheet)[0]
-                await message.channel.send(char_sheet[player])
-                # this works ! ! ! at least its a start. 
+            if collection.find_one({"player": player}):
+                sheet = collection.find_one({"player" : player})
+                await message.channel.send(sheet["sheet"])
+
             else:
                 await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
 
@@ -116,8 +112,8 @@ class MyClient(discord.Client):
             }
 
             # need to check if player already has a character 
-            await message.channel.send('Hello Travler')
-            # await message.channel.send(player)
+            await message.channel.send('Hello Traveler')
+            
             for i in player_sheet:
                 if i == "name":
                     await message.channel.send('What is your name ?')
@@ -137,12 +133,10 @@ class MyClient(discord.Client):
 
             
             await message.channel.send('player sheet:')
-            ## we can save the player sheet in the repl db or in whatever db we use in the final product
-            ## this line lets us save it under the players discord name in our database. 
 
-            collection.insert_one({str(player): player_sheet}) # this did write my object to the db
-            sheet = collection.find({str(player)})
-            await message.channel.send(sheet) # this doesn't like to output like this. 
+            collection.insert_one({"player" : str(player.name), "sheet": player_sheet})
+            sheet = collection.find_one({"player" : player.name})
+            await message.channel.send(sheet["sheet"])
 
 client = MyClient()
 client.run(os.environ['TOKEN'])
