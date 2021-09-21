@@ -107,13 +107,17 @@ class MyClient(discord.Client):
                 if answer.content.upper() == 'Y':
                     await message.channel.send(f" {key}:{sheet[key]} should equal what?")
                     update_answer = await client.wait_for('message')
-                    collection.update_one({'player': player.name }, {'$set': {key : update_answer.content}}, upsert=False) # only works with $ operators
+                    print(update_answer.content)
+                    print(key)
+                    # this push the info into my document but not into the sheet object.
+                    collection.update_one({'player': player.name }, {'$set': {"sheet" : {str(key) : update_answer.content}}}, upsert=False) # only works with $ operators
+                    # currently this updates but overwirtes the entire sheet with just this one key value pair. 
 
                 else:
                     await message.channel.send('okay then')
 
             # print(sheet['sheet'])
-    ### build character sheet 
+    ### build character sheet
         if msg.startswith('/create-char'):
 
             player = message.author
