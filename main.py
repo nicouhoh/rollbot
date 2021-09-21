@@ -17,6 +17,8 @@ collection = db["character_sheets"]
 
 ### bot/ client  class 
 class MyClient(discord.Client):
+    # got to look up, seemed to work without it but seems weird still. 
+    client = discord.Client
 
     async def on_ready(self):
         print('Logged in as')
@@ -76,8 +78,8 @@ class MyClient(discord.Client):
     # delete character player_sheet
 
         if msg.startswith('/delete-character'):
-            player = str(message.author)
-            data = list(collection.find({}))[0][player] # data is just the parsed out bit and deleteing it wont affect the db
+            player = message.author
+            data = list(collection.find({"player": player.name})) # data is just the parsed out bit and deleteing it wont affect the db
             if data:
                 await message.channel.send(f"are you sure you want to delete your character {str(data['name'])} - Y / N ")
                 answer = await client.wait_for('message')
@@ -91,7 +93,26 @@ class MyClient(discord.Client):
 
             else:
                 await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
+        ## update 
+        if msg.startswith('/update'):
+            player = message.author
+            find = collection.find_one({"player" : str(player.name)})
+            sheet = find['sheet']
 
+            ## for updating now we will need to loops over the keys print them out, ask y/n if we want to update this field and follow through with a
+            # collection.update_one({'player': player.name }, {"$set": post}, upsert=False) 
+            for key in sheet:
+                await message.channel.send(f" would you like to update your {key}? y/n")
+                answer = await client.wait_for('message')#wait_for(message, check = check) need to define def check that checks the message.authour is == to the author who started the command. or player in our context
+                if answer.content.upper() == 'Y':
+                    await message.channel.send(f" {key}:{sheet[key]} should equal what?")
+                    update_answer = await client.wait_for('message')
+                    collection.update_one({'player': player.name }, {'$set': {key : update_answer.content}}, upsert=False) # only works with $ operators
+
+                else:
+                    await message.channel.send('okay then')
+
+            # print(sheet['sheet'])
     ### build character sheet 
         if msg.startswith('/create-char'):
 
