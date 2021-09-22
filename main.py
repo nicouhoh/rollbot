@@ -1,24 +1,13 @@
 ##### imports
 import discord
 import os
-import random
-import pymongo
-from pymongo import MongoClient
-from dotenv import load_dotenv
 from character_sheet import create_character, delete_sheet, lvl_up, view_sheet
 from dice_roll import dice
-load_dotenv()
-
-URI = os.environ['MONGODB_URI']
-cluster = MongoClient(URI)
-db = cluster["Roll_bot"]
-collection = db["character_sheets"]
 
 ### bot/ client  class 
 class MyClient(discord.Client):
 
     client = discord.Client
-    # got to look up, seemed to work without it but seems weird still. 
 
     #print in console that we are ready when bot turns on
     async def on_ready(self):
@@ -43,6 +32,9 @@ class MyClient(discord.Client):
         if msg.startswith('/roll'):
             await dice(self, msg, message)
 
+        #############################################
+        ########### Character-sheet functions 
+
         #view player player_sheet
         if msg.startswith('/view-sheet'):
             await view_sheet(message)
@@ -58,6 +50,9 @@ class MyClient(discord.Client):
         ##create character sheet
         if msg.startswith('/create-char'):
             await create_character(self, message)
+
+        ################################################
+
 
 client = MyClient()
 client.run(os.environ['TOKEN'])
