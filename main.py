@@ -5,7 +5,7 @@ import random
 import pymongo
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from character_sheet import create_character, delete_sheet
+from character_sheet import create_character, delete_sheet, lvl_up, view_sheet
 from dice_roll import dice
 load_dotenv()
 
@@ -45,57 +45,17 @@ class MyClient(discord.Client):
 
         #view player player_sheet
         if msg.startswith('/view-sheet'):
-
-            player = message.author.name
-
-            if collection.find_one({"player": player}):
-                sheet = collection.find_one({"player" : player})
-                await message.channel.send(sheet)
-
-            else:
-                await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
-
-    # delete character player_sheet
-
+            await view_sheet(message)
+    
+        # delete character player_sheet
         if msg.startswith('/delete-character'):
             await delete_sheet(self, message)
             
         ## update 
-
         if msg.startswith('/lvl-up'):
+            await lvl_up(self, message)
 
-            player = message.author
-            sheet = collection.find_one({"player" : player.name})
-            
-            player_sheet = {
-                "player" : sheet['player'],      
-                "name": sheet['name'],
-                "look": sheet['look'],
-                "armor": sheet['armor'],
-                "hitpoints": sheet['hitpoints'], 
-                "damage": sheet['damage'],
-                "strength": sheet['strength'],
-                "dexterity": sheet['dexterity'],
-                "constitution": sheet['constitution'],
-                "inteligence": sheet['inteligence'],
-                "wisdom": sheet['wisdom'],
-                "charisma": sheet['charisma']
-            }
-            for key in player_sheet:
-                if key == '_id' or key == 'player':
-                    pass
-                else:
-                    await message.channel.send(f" would you like to update your {key}? y/n")
-                    answer = await client.wait_for('message')#wait_for(message, check = check) need to define def check that checks the message.authour is == to the author who started the command. or player in our context
-                    if answer.content.upper() == 'Y':
-                        await message.channel.send(f" {key}:{player_sheet[key]} should equal what?")
-                        update_answer = await client.wait_for('message')
-                        player_sheet[key] = update_answer.content
-                        collection.replace_one({'player': player.name }, player_sheet, upsert=False)
-                    else:
-                        await message.channel.send('okay then')
-
-    ### build character sheet
+        ##create character sheet
         if msg.startswith('/create-char'):
             await create_character(self, message)
 
