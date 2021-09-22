@@ -12,6 +12,7 @@ cluster = MongoClient(URI)
 db = cluster["Roll_bot"]
 collection = db["character_sheets"]
 
+############ Create /create-char
 
 async def create_character(client, message):
     player = message.author.name
@@ -75,6 +76,54 @@ async def create_character(client, message):
 
         sheet = collection.find_one({"player" : player})
         await message.channel.send(sheet)
+
+########## Read /view-sheet
+
+async def view_sheet(message):
+    player = message.author.name
+
+    if collection.find_one({"player": player}):
+        sheet = collection.find_one({"player" : player})
+        await message.channel.send(sheet)
+
+    else:
+        await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
+
+############ Update /lvl-up
+
+async def lvl_up(client, message):
+    player = message.author
+    sheet = collection.find_one({"player" : player.name})
+            
+    player_sheet = {
+        "player" : sheet['player'],      
+        "name": sheet['name'],
+        "look": sheet['look'],
+        "armor": sheet['armor'],
+        "hitpoints": sheet['hitpoints'], 
+        "damage": sheet['damage'],
+        "strength": sheet['strength'],
+        "dexterity": sheet['dexterity'],
+        "constitution": sheet['constitution'],
+        "inteligence": sheet['inteligence'],
+        "wisdom": sheet['wisdom'],
+        "charisma": sheet['charisma']
+    }
+    for key in player_sheet:
+        if key == '_id' or key == 'player':
+            pass
+        else:
+            await message.channel.send(f" would you like to update your {key}? y/n")
+            answer = await client.wait_for('message')#wait_for(message, check = check) need to define def check that checks the message.authour is == to the author who started the command. or player in our context
+            if answer.content.upper() == 'Y':
+                await message.channel.send(f" {key}:{player_sheet[key]} should equal what?")
+                update_answer = await client.wait_for('message')
+                player_sheet[key] = update_answer.content
+                collection.replace_one({'player': player.name }, player_sheet, upsert=False)
+            else:
+                await message.channel.send('okay then')
+
+############## Delete /delete-character
 
 async def delete_sheet(client, message):
     player = message.author

@@ -1,18 +1,10 @@
 ##### imports
-import discord
-import os
 import random
-import pymongo
 from pymongo import MongoClient
 from dotenv import load_dotenv
 
-load_dotenv()
-
-URI = os.environ['MONGODB_URI']
-cluster = MongoClient(URI)
-db = cluster["Roll_bot"]
-collection = db["character_sheets"]
-
+# basic dice function 
+# needs some bug fixes, new roll + atr function 
 async def dice(client, input, message):
 
     roll = input.split('roll', 1)[1]
