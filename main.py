@@ -1,6 +1,4 @@
 ##### imports
-# from replit import db
-# will change all uses of db to Mongo DB  
 import discord
 import os
 import random
@@ -17,15 +15,22 @@ collection = db["character_sheets"]
 
 ### bot/ client  class 
 class MyClient(discord.Client):
-    # got to look up, seemed to work without it but seems weird still. 
-    client = discord.Client
 
+    client = discord.Client
+    # got to look up, seemed to work without it but seems weird still. 
+
+    ##### Helper Functions ######
+    #############################
+
+    #print in console that we are ready when bot turns on
     async def on_ready(self):
         print('Logged in as')
         print(self.user.name)
         print('------')
 
+    #dice roll function 
     async def dice(self, input, message):
+
         roll = input.split('roll', 1)[1]
 
         if(roll.split('d')[0] == " " or roll.split('d')[0] == "" ):
@@ -37,7 +42,7 @@ class MyClient(discord.Client):
 
         sides = int(float(roll.split('d')[1]))
 
-        await message.channel.send(str(message.author) + " rolled " +str(roll))
+        await message.channel.send(str(message.author.name) + " rolled " +str(roll))
 
         total = 0
 
@@ -52,24 +57,27 @@ class MyClient(discord.Client):
         await message.channel.send(f'{str(message.author)} rolled a total of ' + str(total))  
         return total
 
+    ### on_message responses ####
     async def on_message(self, message):
 
+        # check that the message is not from the bot
         if message.author.id == self.user.id:
             return
         
         msg = message.content
 
+        #ping bot the check its on / working
         if msg.startswith('/hey'):
             await message.channel.send(f'Hello it is I {self.user.name}')
         
-        #on message starts with /roll run roll function without putting total into another function
+        #run roll function without passing return value to another function
         if msg.startswith('/roll'):
             await self.dice(msg, message)
 
         #view player player_sheet
         if msg.startswith('/view-sheet'):
 
-            player = str(message.author.name)
+            player = message.author.name
 
             if collection.find_one({"player": player}):
                 sheet = collection.find_one({"player" : player})
@@ -82,14 +90,14 @@ class MyClient(discord.Client):
 
         if msg.startswith('/delete-character'):
             player = message.author
-            data = collection.find({"player": player.name}) # data is just the parsed out bit and deleteing it wont affect the db
-            if data:
-                await message.channel.send(f"are you sure you want to delete your character {data['name']} - Y / N ")
+            sheet = collection.find_one({"player": player.name}) # data is just the parsed out bit and deleteing it wont affect the db
+            if sheet:
+                await message.channel.send(f"are you sure you want to delete your character {sheet['name']} - Y / N ")
                 answer = await client.wait_for('message')
 
                 if answer.content.upper() == 'Y':
                     await message.channel.send('your character sheet has been destroyed')
-                    # del 
+                    collection.delete_one({"player": player.name})
                 else:
                     await message.channel.send('character not deleted')
                     return 
