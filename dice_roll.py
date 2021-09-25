@@ -12,7 +12,7 @@ async def dice(client, input, message):
     if(roll.split('d')[0] == " " or roll.split('d')[0] == "" ):
         num = 1
     elif(len(roll.split('d')[0]) > 3):
-        pass
+        return # just stops function from running if it slices the string this way per the issue we've been having. 
     else:
         num = int(float(roll.split('d')[0]))
 
@@ -27,6 +27,8 @@ async def dice(client, input, message):
         for n in rolls:
             rolled_num = random.randint(1,sides)
             await message.channel.send(rolled_num)
+            # rolling hangs up the client with all these seprate messages, 
+            # we should try sending 1 message that is created by the function, like the player-sheeet-reader()
             total = rolled_num + total
 
 
