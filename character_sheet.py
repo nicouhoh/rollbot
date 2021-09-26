@@ -1,10 +1,11 @@
 ##### imports
-from dice_roll import dice
 import discord
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+
 from printer import player_sheet_reader
+from dice_roll import dice
 
 load_dotenv()
 
@@ -124,6 +125,9 @@ async def lvl_up(client, message):
             else:
                 await message.channel.send('okay then')
 
+    sheet = collection.find_one({"player" : player.name})          
+    await player_sheet_reader(message, sheet)
+    
 ############## Delete /delete-character
 
 async def delete_sheet(client, message):
