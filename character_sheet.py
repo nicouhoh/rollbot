@@ -4,6 +4,7 @@ import discord
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from printer import player_sheet_reader
 
 load_dotenv()
 
@@ -42,7 +43,8 @@ async def create_character(client, message):
         for i in player_sheet:
             if i == "name":
                 await message.channel.send('What is your name ?')
-                name = await client.wait_for('message')
+                name = await client.wait_for('message', check=lambda msg: msg.author.name == player) 
+                #possible update to listen to only response of player but does not seem to work
                 player_sheet["name"] = name.content
             elif i == "look":
                 await message.channel.send('Descibe your appearance.')
@@ -75,8 +77,7 @@ async def create_character(client, message):
             })
 
         sheet = collection.find_one({"player" : player})
-        await message.channel.send(sheet)
-
+        await player_sheet_reader(message, sheet)
 ########## Read /view-sheet
 
 async def view_sheet(message):
@@ -84,8 +85,8 @@ async def view_sheet(message):
 
     if collection.find_one({"player": player}):
         sheet = collection.find_one({"player" : player})
-        await message.channel.send(sheet)
-
+        # await message.channel.send(sheet)
+        await player_sheet_reader(message, sheet)
     else:
         await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
 
