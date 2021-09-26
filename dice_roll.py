@@ -11,8 +11,6 @@ async def dice(client, input, message):
 
     if(roll.split('d')[0] == " " or roll.split('d')[0] == "" ):
         num = 1
-    # elif(len(roll.split('d')[0]) > 3):
-    #     return # just stops function from running if it slices the string this way per the issue we've been having. 
     else:
         num = int(float(roll.split('d')[0]))
 
@@ -29,5 +27,5 @@ async def dice(client, input, message):
             rolling_txt = rolling_txt + f"... {rolled_num} "
             total = rolled_num + total
 
-        await message.channel.send(f"{message.author.name} rolled {str(roll)} \n {rolling_txt} \n {message.author.name} rolled a total of {str(total)}")  
+        await message.channel.send(f"{message.author.name} rolled {str(roll)} \n {rolling_txt} \n a total of {str(total)}")  
         return total
