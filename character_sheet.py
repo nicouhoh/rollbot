@@ -125,6 +125,9 @@ async def lvl_up(client, message):
             else:
                 await message.channel.send('okay then')
 
+    sheet = collection.find_one({"player" : player.name})          
+    await player_sheet_reader(message, sheet)
+    
 ############## Delete /delete-character
 
 async def delete_sheet(client, message):
