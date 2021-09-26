@@ -1,10 +1,11 @@
 ##### imports
-from dice_roll import dice
 import discord
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
+
 from printer import player_sheet_reader
+from dice_roll import dice
 
 load_dotenv()
 
