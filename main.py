@@ -2,7 +2,7 @@
 import discord
 import os
 from character_sheet import create_character, delete_sheet, lvl_up, view_sheet
-from dice_roll import dice
+from dice_roll import dice, roll_plus_attr
 
 ### bot/ client  class 
 class MyClient(discord.Client):
@@ -28,9 +28,13 @@ class MyClient(discord.Client):
         if msg.startswith('/hey'):
             await message.channel.send(f'Hello it is I {self.user.name}')
         
+        #roll plus attr
+        if msg.startswith('/roll') and '+' in msg:
+            await roll_plus_attr(msg, message)
+
         #run roll function without passing return value to another function
-        if msg.startswith('/roll'):
-            await dice(self, msg, message)
+        if msg.startswith('/roll') and "+" not in msg:
+            await dice(msg, message)
 
         #############################################
         ########### Character-sheet functions 
