@@ -39,6 +39,11 @@ async def create_character(client, message):
             "charisma": 0
             }
 
+        starting_stats = ['16(+2)','15(+1)','13(+1)','12(-)', '9(-)', '8(-1)']
+        # need to build out create character function to fill stats with these values instead of by rolling
+        # when a player is asked to assign a value to a stat it should print all the remaining values to the chat,
+        # after a value is selected it should not be printed when asking for the next stat. 
+
         await message.channel.send('Hello Traveler')
                 
         for i in player_sheet:
@@ -68,7 +73,7 @@ async def create_character(client, message):
             "look": player_sheet['look'],
             "armor": 0,
             "hitpoints": 0, 
-            "damage": 0,
+            "damage": 0, # should be assigned based on class player chooses is dice val d6, d10 etc... 
             "strength": player_sheet['strength'],
             "dexterity": player_sheet['dexterity'],
             "constitution": player_sheet['constitution'],
