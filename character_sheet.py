@@ -59,11 +59,16 @@ async def create_character(client, message):
             elif i == 'armor' or i == "hitpoints" or i == "damage":
                 player_sheet[i] = 0
             else:
-                await message.channel.send(f"what is the dice throw for your {i}")
-                roll = await client.wait_for('message') #occasionally this reads the message from 132 as the wait_for message, need to make this only for message from player who started process. 
-                dice_roll = await dice(client, roll.content, message)
-                player_sheet[i] = dice_roll
-
+                await message.channel.send(f"which value shall we assign to your {i}, {starting_stats}")
+                answer = await client.wait_for('message') #occasionally this reads the message from 132 as the wait_for message, need to make this only for message from player who started process. 
+                if answer.content in starting_stats:
+                    starting_stats.pop(starting_stats.index(answer.content))
+                    player_sheet[i] = answer.content 
+                else:
+                    await message.channel.send('that is not a valid input try again.')
+                    answer = await client.wait_for('message') #occasionally this reads the message from 132 as the wait_for message, need to make this only for message from player who started process. 
+                    # this doesn't add the stat to the sheet or remove it from the list when we make the mistake.
+                    #this may need a helper function to deal with wrong inputs. 
                 
         await message.channel.send('player sheet:')
 
