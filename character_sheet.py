@@ -14,6 +14,11 @@ cluster = MongoClient(URI)
 db = cluster["Roll_bot"]
 collection = db["character_sheets"]
 
+##### helper function #############
+
+# async def create_helper(client, message, response):
+#     print(response)
+
 ############ Create /create-char
 
 async def create_character(client, message):
