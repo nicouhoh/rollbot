@@ -6,7 +6,7 @@ The first version of this bot with focus specificly on Dungeon World. Later it b
 ## Commands
 + /hey - ping the bot make sure it is online
 + /create-char - walks a player through the character creation process and saves the players charactersheet on the backend.
-+ /view-shet - prints the players character-sheet into the discord chat.
++ /view-sheet - prints the player's character-sheet into the discord chat.
 + /delete-character - confirms if you are sure and then deletes players character sheet.
 + /lvl-up - allows a player to update their character sheet
 + /roll - roll dice function use _d_ syntax ex: "/roll 2d6" this will roll two six sided dice and print the output into the chat.
