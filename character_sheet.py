@@ -59,10 +59,16 @@ async def create_character(client, message):
             elif i == 'armor' or i == "hitpoints" or i == "damage":
                 player_sheet[i] = 0
             else:
-                await message.channel.send(f"what is the dice throw for your {i}")
-                roll = await client.wait_for('message') #occasionally this reads the message from 132 as the wait_for message, need to make this only for message from player who started process. 
-                dice_roll = await dice(client, roll.content, message)
-                player_sheet[i] = dice_roll
+                await message.channel.send(f"choose a value from this list: {starting_stats} to assign to your {i}")
+                response = await client.wait_for('message')
+
+                if response.content in starting_stats:
+                    starting_stats.pop(starting_stats.index(response.content))
+                    player_sheet[i] = response.content
+                else:
+                    await message.channel.send('hah loser now that skill is set to 0')
+                    player_sheet[i] = '0'
+
 
                 
         await message.channel.send('player sheet:')
