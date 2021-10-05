@@ -16,8 +16,12 @@ collection = db["character_sheets"]
 
 ##### helper function #############
 
-# async def create_helper(client, message, response):
-#     print(response)
+async def create_helper(response, starting_stats):
+    if response in starting_stats:
+        return True
+        
+
+
 
 ############ Create /create-char
 
@@ -65,14 +69,18 @@ async def create_character(client, message):
                 player_sheet[i] = 0
             else:
                 await message.channel.send(f"choose a value from this list: {starting_stats} to assign to your {i}")
-                response = await client.wait_for('message')
 
-                if response.content in starting_stats:
-                    starting_stats.pop(starting_stats.index(response.content))
-                    player_sheet[i] = response.content
-                else:
-                    await message.channel.send('hah loser now that skill is set to 0')
-                    player_sheet[i] = '0'
+                valid_ans = False
+                while valid_ans == False:
+                    response = await client.wait_for('message')
+
+                    if response.content in starting_stats:
+                        starting_stats.pop(starting_stats.index(response.content))
+                        player_sheet[i] = response.content
+                        valid_ans = True
+                    else:
+                        await message.channel.send(f'choose a valid value {starting_stats}')
+
 
 
                 
