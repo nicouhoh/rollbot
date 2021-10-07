@@ -28,9 +28,6 @@ def class_damage(i):
     }
     return str(switch.get(i))
         
-
-
-
 ############ Create /create-char
 
 async def create_character(client, message):
@@ -101,8 +98,6 @@ async def create_character(client, message):
                     else:
                         await message.channel.send(f'choose a valid value {starting_stats}')
 
-
-
                 
         await message.channel.send('player sheet:')
 
@@ -131,7 +126,6 @@ async def view_sheet(message):
 
     if collection.find_one({"player": player}):
         sheet = collection.find_one({"player" : player})
-        # await message.channel.send(sheet)
         await player_sheet_reader(message, sheet)
     else:
         await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
