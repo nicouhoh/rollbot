@@ -37,7 +37,7 @@ async def dice(input, message):
             rolling_txt = rolling_txt + f"... {rolled_num} "
             total = rolled_num + total
 
-        await message.channel.send(f"{sheet['name']}({message.author.name}) rolled {str(roll)} \n {rolling_txt} \n a total of {str(total)}")  
+        await message.channel.send(f"{sheet['name']} ({message.author.name}) rolled {str(roll)} \n {rolling_txt} \n a total of {str(total)}")  
         return total
 
 async def roll_plus_attr(input, message):

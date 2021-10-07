@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from printer import player_sheet_reader
 from dice_roll import dice
-from character_classes import class_list
+from character_classes import class_list, barbarian, bard, cleric, druid, fighter, immolator
 
 load_dotenv()
 
@@ -17,9 +17,16 @@ collection = db["character_sheets"]
 
 ##### helper function #############
 
-async def create_helper(response, starting_stats):
-    if response in starting_stats:
-        return True
+def class_damage(i):
+    switch = {
+        'barbarian': barbarian['damage'],
+        'bard': bard['damage'],
+        'cleric': cleric['damage'],
+        'druid': druid['damage'],
+        'fighter': fighter['damage'],
+        'immolator': immolator['damage'],
+    }
+    return str(switch.get(i))
         
 
 
@@ -66,7 +73,7 @@ async def create_character(client, message):
                 look = await client.wait_for('message')
                 player_sheet['look'] = look.content
             elif i == 'armor' or i == "hitpoints" or i == "damage":
-                player_sheet[i] = 0
+                pass
             elif i == "class":
                 await message.channel.send(f" choose your character's class from this list: {class_list}")
 
@@ -76,6 +83,7 @@ async def create_character(client, message):
 
                     if response.content in class_list:
                         player_sheet[i] = response.content
+                        player_sheet['damage'] = class_damage(response.content)
                         valid_ans = True
                     else:
                         await message.channel.send(f'choose a valid class {class_list}')
@@ -105,7 +113,7 @@ async def create_character(client, message):
             "class": player_sheet["class"],
             "armor": 0,
             "hitpoints": 0, 
-            "damage": 0, # should be assigned based on class player chooses is dice val d6, d10 etc... 
+            "damage": player_sheet['damage'],
             "strength": player_sheet['strength'],
             "dexterity": player_sheet['dexterity'],
             "constitution": player_sheet['constitution'],
