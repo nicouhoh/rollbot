@@ -67,10 +67,25 @@ async def roll_plus_attr(input, message):
             rolling_txt = rolling_txt + f"... {rolled_num} "
             total = rolled_num + total
 
-        total += int(sheet[attr])
+        if int(sheet[attr]) < 3:
+            total -= 3
+        elif int(sheet[attr]) <= 5:
+            total -= 2
+        elif int(sheet[attr]) <= 8:
+            total -= 1
+        elif int(sheet[attr]) <= 12:
+            total = total
+        elif int(sheet[attr]) <= 15:
+            total += 1
+        elif int(sheet[attr]) <= 17:
+            total += 2
+        elif int(sheet[attr]) > 17:
+            total += 3
 
-        await message.channel.send(f"{sheet['name']}({message.author.name}) rolled {str(roll)} \n {rolling_txt} \n plus their {attr}: {sheet[attr]} for a total of {str(total)}")  
+        await message.channel.send(f"{sheet['name']}({message.author.name}) rolled {str(roll)} \n {rolling_txt} \n andf their {attr} modifier makes it a total of {str(total)}")  
         return total + int(sheet[attr]) 
 
 
     await message.channel.send(f"roll var: {roll} attr var: {attr}")
+
+# async def roll_damage():
