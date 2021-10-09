@@ -108,6 +108,7 @@ async def roll_damage(input, message, client):
         sides = int(float(roll.content.split('d')[1]))
 
         rolling_text = ""
+        
         for n in range(num):
             roll = random.randint(1,sides)
             rolled += roll
