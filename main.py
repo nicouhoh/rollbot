@@ -2,7 +2,7 @@
 import discord
 import os
 from character_sheet import create_character, delete_sheet, lvl_up, view_sheet
-from dice_roll import dice, roll_plus_attr
+from dice_roll import dice, roll_damage, roll_plus_attr
 
 ### bot/ client  class 
 class MyClient(discord.Client):
@@ -27,7 +27,9 @@ class MyClient(discord.Client):
         #ping bot the check its on / working
         if msg.startswith('/hey'):
             await message.channel.send(f'Hello it is I {self.user.name}')
-        
+        # roll damage
+        if msg.startswith('/damage'):
+            await roll_damage(msg, message, self)
         #roll plus attr
         if msg.startswith('/roll') and '+' in msg:
             await roll_plus_attr(msg, message)
