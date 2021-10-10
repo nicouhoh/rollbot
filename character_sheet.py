@@ -27,7 +27,17 @@ def class_damage(i):
         'immolator': immolator['damage'],
     }
     return str(switch.get(i))
-        
+
+def class_bonds(i):
+    switch = {
+        'barbarian': barbarian['bonds'],
+        'bard': bard['bonds'],
+        'cleric': cleric['bonds'],
+        'druid': druid['bonds'],
+        'fighter': fighter['bonds'],
+        'immolator': immolator['bonds'],
+    }
+    return str(switch.get(i))
 ############ Create /create-char
 
 async def create_character(client, message):
@@ -51,7 +61,8 @@ async def create_character(client, message):
             "constitution": 0,
             "inteligence": 0,
             "wisdom": 0,
-            "charisma": 0
+            "charisma": 0,
+            "bonds": []
             }
 
         # starting_stats = ['16(+2)','15(+1)','13(+1)','12(-)', '9(-)', '8(-1)']
@@ -69,7 +80,7 @@ async def create_character(client, message):
                 await message.channel.send('Descibe your appearance.')
                 look = await client.wait_for('message')
                 player_sheet['look'] = look.content
-            elif i == 'armor' or i == "hitpoints" or i == "damage":
+            elif i == 'armor' or i == "hitpoints" or i == "damage" or i == "bonds":
                 pass
             elif i == "class":
                 await message.channel.send(f" choose your character's class from this list: {class_list}")
@@ -81,6 +92,7 @@ async def create_character(client, message):
                     if response.content in class_list:
                         player_sheet[i] = response.content
                         player_sheet['damage'] = class_damage(response.content)
+                        player_sheet['bonds'] = class_bonds(response.content)
                         valid_ans = True
                     else:
                         await message.channel.send(f'choose a valid class {class_list}')
@@ -114,7 +126,8 @@ async def create_character(client, message):
             "constitution": player_sheet['constitution'],
             "inteligence": player_sheet['inteligence'],
             "wisdom": player_sheet['wisdom'],
-            "charisma": player_sheet['charisma']
+            "charisma": player_sheet['charisma'],
+            "bonds" : player_sheet['bonds'],
             })
 
         sheet = collection.find_one({"player" : player})
