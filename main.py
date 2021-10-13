@@ -45,6 +45,8 @@ class MyClient(discord.Client):
         await message.channel.send(f'{str(message.author)} rolled a total of ' + str(total))  
         return total
 
+
+
     async def on_message(self, message):
 
         if message.author.id == self.user.id:
