@@ -3,10 +3,10 @@ class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator' ]
 barbarian = {
     'damage': 'd10',
     'bonds': [
-        "_____ is puny and foolish, but amusing to me.", 
-        "_____'s ways are strange and confusing.", 
-        "_____ is always getting into trouble - I must protect them from themselves.",
-        "_____ shares my hunger for glory; the earth will tremble at our passing!",
+        "_ _ _ _ _ is puny and foolish, but amusing to me.", 
+        "_ _ _ _ _'s ways are strange and confusing.", 
+        "_ _ _ _ _ is always getting into trouble - I must protect them from themselves.",
+        "_ _ _ _ _  shares my hunger for glory; the earth will tremble at our passing!",
     ],
 }
 bard = {
