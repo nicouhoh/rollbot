@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from printer import player_sheet_reader
 from dice_roll import dice
+from character_classes import class_list, barbarian, bard, cleric, druid, fighter, immolator
 
 load_dotenv()
 
@@ -14,6 +15,29 @@ cluster = MongoClient(URI)
 db = cluster["Roll_bot"]
 collection = db["character_sheets"]
 
+##### helper function #############
+
+def class_damage(i):
+    switch = {
+        'barbarian': barbarian['damage'],
+        'bard': bard['damage'],
+        'cleric': cleric['damage'],
+        'druid': druid['damage'],
+        'fighter': fighter['damage'],
+        'immolator': immolator['damage'],
+    }
+    return str(switch.get(i))
+
+def class_bonds(i):
+    switch = {
+        'barbarian': barbarian['bonds'],
+        'bard': bard['bonds'],
+        'cleric': cleric['bonds'],
+        'druid': druid['bonds'],
+        'fighter': fighter['bonds'],
+        'immolator': immolator['bonds'],
+    }
+    return str(switch.get(i))
 ############ Create /create-char
 
 async def create_character(client, message):
@@ -28,6 +52,7 @@ async def create_character(client, message):
         player_sheet = {
             "name": '',
             "look": '',
+            "class": '',
             "armor": 0,
             "hitpoints": 0, 
             "damage": 0,
@@ -36,13 +61,12 @@ async def create_character(client, message):
             "constitution": 0,
             "inteligence": 0,
             "wisdom": 0,
-            "charisma": 0
+            "charisma": 0,
+            "bonds": []
             }
 
-        starting_stats = ['16(+2)','15(+1)','13(+1)','12(-)', '9(-)', '8(-1)']
-        # need to build out create character function to fill stats with these values instead of by rolling
-        # when a player is asked to assign a value to a stat it should print all the remaining values to the chat,
-        # after a value is selected it should not be printed when asking for the next stat. 
+        # starting_stats = ['16(+2)','15(+1)','13(+1)','12(-)', '9(-)', '8(-1)']
+        starting_stats = ['16','15','13','12', '9', '8']
 
         await message.channel.send('Hello Traveler')
                 
@@ -56,13 +80,35 @@ async def create_character(client, message):
                 await message.channel.send('Descibe your appearance.')
                 look = await client.wait_for('message')
                 player_sheet['look'] = look.content
-            elif i == 'armor' or i == "hitpoints" or i == "damage":
-                player_sheet[i] = 0
+            elif i == 'armor' or i == "hitpoints" or i == "damage" or i == "bonds":
+                pass
+            elif i == "class":
+                await message.channel.send(f" choose your character's class from this list: {class_list}")
+
+                valid_ans = False
+                while valid_ans == False:
+                    response = await client.wait_for('message')
+
+                    if response.content in class_list:
+                        player_sheet[i] = response.content
+                        player_sheet['damage'] = class_damage(response.content)
+                        player_sheet['bonds'] = class_bonds(response.content)
+                        valid_ans = True
+                    else:
+                        await message.channel.send(f'choose a valid class {class_list}')
             else:
-                await message.channel.send(f"what is the dice throw for your {i}")
-                roll = await client.wait_for('message') #occasionally this reads the message from 132 as the wait_for message, need to make this only for message from player who started process. 
-                dice_roll = await dice(client, roll.content, message)
-                player_sheet[i] = dice_roll
+                await message.channel.send(f"choose a value from this list: {starting_stats} to assign to your {i}")
+
+                valid_ans = False
+                while valid_ans == False:
+                    response = await client.wait_for('message')
+
+                    if response.content in starting_stats:
+                        starting_stats.pop(starting_stats.index(response.content))
+                        player_sheet[i] = response.content
+                        valid_ans = True
+                    else:
+                        await message.channel.send(f'choose a valid value {starting_stats}')
 
                 
         await message.channel.send('player sheet:')
@@ -71,15 +117,17 @@ async def create_character(client, message):
             "player" : player,      
             "name": player_sheet['name'],
             "look": player_sheet['look'],
+            "class": player_sheet["class"],
             "armor": 0,
             "hitpoints": 0, 
-            "damage": 0, # should be assigned based on class player chooses is dice val d6, d10 etc... 
+            "damage": player_sheet['damage'],
             "strength": player_sheet['strength'],
             "dexterity": player_sheet['dexterity'],
             "constitution": player_sheet['constitution'],
             "inteligence": player_sheet['inteligence'],
             "wisdom": player_sheet['wisdom'],
-            "charisma": player_sheet['charisma']
+            "charisma": player_sheet['charisma'],
+            "bonds" : player_sheet['bonds'],
             })
 
         sheet = collection.find_one({"player" : player})
@@ -91,7 +139,6 @@ async def view_sheet(message):
 
     if collection.find_one({"player": player}):
         sheet = collection.find_one({"player" : player})
-        # await message.channel.send(sheet)
         await player_sheet_reader(message, sheet)
     else:
         await message.channel.send('You do not have a player sheet, create one by typing "/create-char" into the chat.')
@@ -106,6 +153,7 @@ async def lvl_up(client, message):
         "player" : sheet['player'],      
         "name": sheet['name'],
         "look": sheet['look'],
+        "class": sheet['class'],
         "armor": sheet['armor'],
         "hitpoints": sheet['hitpoints'], 
         "damage": sheet['damage'],
@@ -117,7 +165,7 @@ async def lvl_up(client, message):
         "charisma": sheet['charisma']
     }
     for key in player_sheet:
-        if key == '_id' or key == 'player':
+        if key == '_id' or key == 'player' or key == "class":
             pass
         else:
             await message.channel.send(f" would you like to update your {key}? y/n")
