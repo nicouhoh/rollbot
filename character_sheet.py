@@ -5,7 +5,6 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 
 from printer import player_sheet_reader
-from dice_roll import dice
 from character_classes import class_list, barbarian, bard, cleric, druid, fighter, immolator
 
 load_dotenv()
@@ -73,7 +72,7 @@ async def create_character(client, message):
         for i in player_sheet:
             if i == "name":
                 await message.channel.send('What is your name ?')
-                name = await client.wait_for('message', check=lambda msg: msg.author.name == player) 
+                name = await client.wait_for('message') 
                 #possible update to listen to only response of player but does not seem to work
                 player_sheet["name"] = name.content
             elif i == "look":

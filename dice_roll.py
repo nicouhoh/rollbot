@@ -89,6 +89,8 @@ async def roll_plus_attr(input, message):
     await message.channel.send(f"roll var: {roll} attr var: {attr}")
 
 async def roll_damage(input, message, client):
+    # def check_user(ctx):
+    #     return ctx.message.author == message.author
 
     sheet = collection.find_one({'player': message.author.name})
     dice = sheet['damage']
