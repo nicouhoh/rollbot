@@ -1,7 +1,7 @@
 ##### imports
 import discord
 import os
-from character_sheet import create_character, delete_sheet, lvl_up, view_sheet
+from character_sheet import create_character, delete_sheet, lvl_up, view_sheet, bonds
 from dice_roll import dice, roll_damage, roll_plus_attr
 
 ### bot/ client  class 
@@ -56,6 +56,9 @@ class MyClient(discord.Client):
         ##create character sheet
         if msg.startswith('/create-char'):
             await create_character(self, message)
+
+        if msg.startswith('/bonds'):
+            await bonds(self, message)
 
         ################################################
 

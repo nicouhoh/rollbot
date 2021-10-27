@@ -179,6 +179,20 @@ async def lvl_up(client, message):
 
     sheet = collection.find_one({"player" : player.name})          
     await player_sheet_reader(message, sheet)
+
+############# Bonds 
+async def bonds(client, message):
+    player = message.author
+    sheet = collection.find_one({"player": player.name})
+
+    bonds = class_bonds(sheet["class"])
+    
+    first_txt = ""
+    for b in bonds.split(','): # not a great way to do this. instead bonds should be lists and entered into the char sheet as a list
+
+        first_txt = first_txt + b + '\n'
+
+    await message.channel.send(f"{first_txt}")
     
 ############## Delete /delete-character
 
