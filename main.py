@@ -1,5 +1,12 @@
 ##### imports
 import discord
+
+intents = discord.Intents.default()
+intents.members = True
+intents.guilds = True
+intents.presences = True
+
+
 import os
 from character_sheet import create_character, delete_sheet, lvl_up, view_sheet, bonds
 from dice_roll import dice, roll_damage, roll_plus_attr
@@ -8,6 +15,7 @@ from dice_roll import dice, roll_damage, roll_plus_attr
 class MyClient(discord.Client):
 
     client = discord.Client
+    
 
     #print in console that we are ready when bot turns on
     async def on_ready(self):
@@ -60,6 +68,18 @@ class MyClient(discord.Client):
         if msg.startswith('/bonds'):
             await bonds(self, message)
 
+        if msg.startswith('/here'):
+            guild_id = message.author.guild.id
+            guild = client.get_guild(guild_id)
+
+            txt= ""
+
+            print(guild.members)
+            
+            for member in guild.members:
+                txt = txt + member.name
+
+            await message.channel.send(txt)
         ################################################
 
 
