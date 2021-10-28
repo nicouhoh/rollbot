@@ -68,7 +68,7 @@ class MyClient(discord.Client):
         if msg.startswith('/bonds'):
             await bonds(self, message)
 
-        # testing scratch getting list of present users
+        # List users who are currently online and members of the guild. 
         if msg.startswith('/here'):
             guild_id = message.author.guild.id
             guild = client.get_guild(guild_id)
@@ -76,7 +76,9 @@ class MyClient(discord.Client):
             txt= ""
             
             for member in guild.members:
-                txt = txt + member.name + ", "
+                
+                if str(member.status) == 'online' and member.bot != True:
+                    txt = txt + member.name + ", "
 
             await message.channel.send(txt)
         ################################################
