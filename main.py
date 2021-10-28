@@ -1,13 +1,20 @@
 ##### imports
 import discord
 import os
-from character_sheet import create_character, delete_sheet, lvl_up, view_sheet
+from character_sheet import create_character, delete_sheet, lvl_up, view_sheet, bonds
 from dice_roll import dice, roll_damage, roll_plus_attr
+
+intents = discord.Intents.default()
+intents.members = True
+intents.guilds = True
+intents.presences = True
 
 ### bot/ client  class 
 class MyClient(discord.Client):
 
-    client = discord.Client
+
+    client = discord.Client()
+    
 
     #print in console that we are ready when bot turns on
     async def on_ready(self):
@@ -57,9 +64,26 @@ class MyClient(discord.Client):
         if msg.startswith('/create-char'):
             await create_character(self, message)
 
+        # Bonds
+        if msg.startswith('/bonds'):
+            await bonds(self, message)
+
+        # List users who are currently online and members of the guild. 
+        if msg.startswith('/here'):
+            guild_id = message.author.guild.id
+            guild = client.get_guild(guild_id)
+
+            txt= ""
+            
+            for member in guild.members:
+                
+                if str(member.status) == 'online' and member.bot != True:
+                    txt = txt + member.name + ", "
+
+            await message.channel.send(txt)
         ################################################
 
 
-client = MyClient()
+client = MyClient(intents = intents)
 client.run(os.environ['TOKEN'])
 

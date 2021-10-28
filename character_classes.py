@@ -1,12 +1,17 @@
 class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator' ]
 
+char_one = "_b_l_a_n_k_"
+char_two = "_b_l_a_n_k_"
+char_three = "_b_l_a_n_k_"
+char_four = "_b_l_a_n_k_"
+
 barbarian = {
     'damage': 'd10',
     'bonds': [
-        "_ _ _ _ _ is puny and foolish, but amusing to me.", 
-        "_ _ _ _ _'s ways are strange and confusing.", 
-        "_ _ _ _ _ is always getting into trouble - I must protect them from themselves.",
-        "_ _ _ _ _  shares my hunger for glory; the earth will tremble at our passing!",
+        f"{char_one} is puny and foolish, but amusing to me.", 
+        f"{char_two}'s ways are strange and confusing.", 
+        f"{char_three} is always getting into trouble - I must protect them from themselves.",
+        f"{char_four} shares my hunger for glory; the earth will tremble at our passing!",
     ],
 }
 bard = {

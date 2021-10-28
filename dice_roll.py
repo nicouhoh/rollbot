@@ -82,13 +82,15 @@ async def roll_plus_attr(input, message):
         elif int(sheet[attr]) > 17:
             total += 3
 
-        await message.channel.send(f"{sheet['name']}({message.author.name}) rolled {str(roll)} \n {rolling_txt} \n andf their {attr} modifier makes it a total of {str(total)}")  
+        await message.channel.send(f"{sheet['name']}({message.author.name}) rolled {str(roll)} \n {rolling_txt} \n and their {attr} modifier makes it a total of {str(total)}")  
         return total + int(sheet[attr]) 
 
 
     await message.channel.send(f"roll var: {roll} attr var: {attr}")
 
 async def roll_damage(input, message, client):
+    # def check_user(ctx):
+    #     return ctx.message.author == message.author
 
     sheet = collection.find_one({'player': message.author.name})
     dice = sheet['damage']
