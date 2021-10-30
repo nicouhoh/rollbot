@@ -36,7 +36,7 @@ def class_bonds(i):
         'fighter': fighter['bonds'],
         'immolator': immolator['bonds'],
     }
-    return str(switch.get(i))
+    return switch.get(i)
 ############ Create /create-char
 
 async def create_character(client, message):
@@ -186,13 +186,27 @@ async def bonds(client, message):
     sheet = collection.find_one({"player": player.name})
 
     bonds = class_bonds(sheet["class"])
+
+    guild = client.get_guild(player.guild.id)
     
-    first_txt = ""
-    for b in bonds.split(','): # not a great way to do this. instead bonds should be lists and entered into the char sheet as a list
+    players = []
+
+    for member in guild.members:
+                
+        if str(member.status) == 'online' and member.bot != True and member.name != player.name:
+            players.append(member.name.lower())
+
+    first_txt = f"selected a player from this list {players} for your first bond. \n"
+
+    for b in bonds:
 
         first_txt = first_txt + b + '\n'
 
     await message.channel.send(f"{first_txt}")
+    response = await client.wait_for('message')
+
+    if response.content.lower() in players:
+        players.pop(players.index(response.content.lower()))
     
 ############## Delete /delete-character
 
