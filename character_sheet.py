@@ -194,6 +194,7 @@ async def bonds(client, message):
     for member in guild.members:
                 
         # if str(member.status) == 'online' and member.bot != True and member.name != player.name:
+        # temp change for dev when this is done un comment above line and remove line below
         if member.bot != True and member.name != player.name:
             players.append(member.name.lower())
 
