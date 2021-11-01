@@ -193,7 +193,8 @@ async def bonds(client, message):
 
     for member in guild.members:
                 
-        if str(member.status) == 'online' and member.bot != True and member.name != player.name:
+        # if str(member.status) == 'online' and member.bot != True and member.name != player.name:
+        if member.bot != True and member.name != player.name:
             players.append(member.name.lower())
 
     first_txt = f"selected a player from this list {players} for your first bond. \n"
@@ -202,13 +203,27 @@ async def bonds(client, message):
 
         first_txt = first_txt + b + '\n'
 
-    await message.channel.send(f"{first_txt}")
+    await message.channel.send(f"{first_txt}") 
+    
     response = await client.wait_for('message')
 
     if response.content.lower() in players:
         players.pop(players.index(response.content.lower()))
+        bonds[0] = bonds[0].replace('character-name', response.content)
+
+    # await message.channel.send(bonds)
+    await message.channel.send(f"selected a player for your second bond.")
+
+    response = await client.wait_for('message')
+
+    if response.content.lower() in players:
+        players.pop(players.index(response.content.lower()))
+        bonds[1] = bonds[1].replace('character-name', response.content)
+
+    await message.channel.send(bonds)
+    ### this should maybe be done by looping through the bonds, this is really not DRY to have in happen 4 times in the code. 
     
-############## Delete /delete-character
+############## Delete /delete-character/
 
 async def delete_sheet(client, message):
     player = message.author
