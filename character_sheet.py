@@ -186,9 +186,7 @@ async def bonds(client, message):
     sheet = collection.find_one({"player": player.name})
 
     bonds = class_bonds(sheet["class"])
-
     guild = client.get_guild(player.guild.id)
-    
     players = []
 
     for member in guild.members:
@@ -196,33 +194,26 @@ async def bonds(client, message):
         # if str(member.status) == 'online' and member.bot != True and member.name != player.name:
         # temp change for dev when this is done un comment above line and remove line below
         if member.bot != True and member.name != player.name:
-            players.append(member.name.lower())
+            # memb_sheet = collection.find_one({"player": member.name})
+            # players.append(str(memb_sheet["name"]))
+            # in theory I think this should work but, no one eles has character sheets for me to try with :( 
+            players.append(member.name)
 
-    first_txt = f"selected a player from this list {players} for your first bond. \n"
+    for i,b in enumerate(bonds):
 
-    for b in bonds:
+        txt = f"selected a player from this list {players} for your bond: \n"
+        await message.channel.send(txt + b)
 
-        first_txt = first_txt + b + '\n'
+        response = await client.wait_for('message')
 
-    await message.channel.send(f"{first_txt}") 
-    
-    response = await client.wait_for('message')
+        if response.content.lower() in players:
+            players.pop(players.index(response.content.lower()))
+            bonds[i] = bonds[i].replace('character-name', response.content)
 
-    if response.content.lower() in players:
-        players.pop(players.index(response.content.lower()))
-        bonds[0] = bonds[0].replace('character-name', response.content)
+    sheet['bonds'] = bonds
+    collection.replace_one({'player': player.name }, sheet, upsert=False)
+    await player_sheet_reader(message, sheet)
 
-    # await message.channel.send(bonds)
-    await message.channel.send(f"selected a player for your second bond.")
-
-    response = await client.wait_for('message')
-
-    if response.content.lower() in players:
-        players.pop(players.index(response.content.lower()))
-        bonds[1] = bonds[1].replace('character-name', response.content)
-
-    await message.channel.send(bonds)
-    ### this should maybe be done by looping through the bonds, this is really not DRY to have in happen 4 times in the code. 
     
 ############## Delete /delete-character/
 
