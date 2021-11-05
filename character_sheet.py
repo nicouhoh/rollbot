@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 
 from printer import player_sheet_reader
-from character_classes import class_list, barbarian, bard, cleric, druid, fighter, immolator
+from character_classes import class_list, barbarian, bard, cleric, druid, fighter, immolator, paladin, ranger, thief, wizard
 
 load_dotenv()
 
@@ -24,6 +24,10 @@ def class_damage(i):
         'druid': druid['damage'],
         'fighter': fighter['damage'],
         'immolator': immolator['damage'],
+        'paladin': paladin['damage'],
+        'ranger': ranger['damage'],
+        'thief': thief['damage'],
+        'wizard': wizard['damage'],
     }
     return str(switch.get(i))
 
@@ -35,6 +39,10 @@ def class_bonds(i):
         'druid': druid['bonds'],
         'fighter': fighter['bonds'],
         'immolator': immolator['bonds'],
+        'paladin': paladin['bonds'],
+        'ranger': ranger['bonds'],
+        'thief': thief['bonds'],
+        'wizard': wizard['bonds'],
     }
     return switch.get(i)
 ############ Create /create-char

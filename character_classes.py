@@ -84,7 +84,7 @@ thief = {
 wizard = {
     'damage': 'd4',
     'bonds': [
-        "character-name will play an important role in the events to come. I have sen it!",
+        "character-name will play an important role in the events to come. I have seen it!",
         "character-name is keeping an immportant secret from me.",
         "character-name is woefully misinformed about the world; I will teach them all that I can.",
         
