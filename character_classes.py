@@ -1,4 +1,4 @@
-class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator' ]
+class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator', 'paladin', 'ranger', 'thief', 'wizard' ]
 
 
 barbarian = {
@@ -52,5 +52,41 @@ immolator = {
         "character-name has felt the hellish touch of fire, now they know my strength.",
         "I will teach character-name the true meaning of sacrifice.",
         "I cast somthing into the fire for character-name and still owe them their due."
+    ]
+}
+paladin = {
+    'damage': 'd10',
+    'bonds': [
+        "character-name's misguided behavior endangers their very soul!",
+        "character-name has stoof by me in battle and can be trusted completely.",
+        "I respect the beliefs of character-name but hope they someday see the true way.",
+        "character-name is a brave soul, I have much to learn from them"
+    ]
+}
+ranger = {
+    'damage': 'd8',
+    'bonds': [
+        "I have guided character-name before and they owe me for it.",
+        "character-name is a friend of nature, so I will be their friend as well.",
+        "character-name has no respect for nature so I have no respect for them.",
+        "character-name does not understand life in the wild so I will teach them"
+    ]
+}
+thief = {
+    'damage': 'd8',
+    'bonds': [
+        "I stole something from character-name",
+        "character-name has my back when things go wrong",
+        "character-name knows incriminating details about me.",
+        "character-name and I have a con running"
+    ]
+}
+wizard = {
+    'damage': 'd4',
+    'bonds': [
+        "character-name will play an important role in the events to come. I have sen it!",
+        "character-name is keeping an immportant secret from me.",
+        "character-name is woefully misinformed about the world; I will teach them all that I can.",
+        
     ]
 }
