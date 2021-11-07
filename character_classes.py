@@ -2,6 +2,7 @@ class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator', 'p
 
 
 barbarian = {
+    'hp': 8,
     'damage': 'd10',
     'bonds': [
         "character-name is puny and foolish, but amusing to me.", 
@@ -11,6 +12,7 @@ barbarian = {
     ],
 }
 bard = {
+    'hp': 6,
     'damage': 'd6',
     'bonds' : [
         "This is not my first adventure with character-name.",
@@ -20,6 +22,7 @@ bard = {
     ],
 }
 cleric = {
+    'hp': 8,
     'damage': 'd6',
     'bonds' : [
         "character-name has insluted my deity; I do ot trust them.",
@@ -29,6 +32,7 @@ cleric = {
     ],
 }
 druid = {
+    'hp': 6,
     'damage': 'd6',
     'bonds': [
         "character-name smells more like prey than a hunter.",
@@ -38,6 +42,7 @@ druid = {
     ],
 }
 fighter = {
+    'hp': 10,
     'damage': 'd10',
     'bonds': [
         "character-name owes me their life, whether they admit it or not.",
@@ -47,6 +52,7 @@ fighter = {
     ]
 }
 immolator = {
+    'hp': 4,
     'damage': 'd8',
     'bonds': [
         "character-name has felt the hellish touch of fire, now they know my strength.",
@@ -55,6 +61,7 @@ immolator = {
     ]
 }
 paladin = {
+    'hp': 10,
     'damage': 'd10',
     'bonds': [
         "character-name's misguided behavior endangers their very soul!",
@@ -64,6 +71,7 @@ paladin = {
     ]
 }
 ranger = {
+    'hp': 8,
     'damage': 'd8',
     'bonds': [
         "I have guided character-name before and they owe me for it.",
@@ -73,6 +81,7 @@ ranger = {
     ]
 }
 thief = {
+    'hp': 6,
     'damage': 'd8',
     'bonds': [
         "I stole something from character-name",
@@ -82,6 +91,7 @@ thief = {
     ]
 }
 wizard = {
+    'hp': 4,
     'damage': 'd4',
     'bonds': [
         "character-name will play an important role in the events to come. I have seen it!",

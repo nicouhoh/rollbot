@@ -45,6 +45,22 @@ def class_bonds(i):
         'wizard': wizard['bonds'],
     }
     return switch.get(i)
+
+def class_hp(i):
+    switch = {
+        'barbarian': barbarian['hp'],
+        'bard': bard['hp'],
+        'cleric': cleric['hp'],
+        'druid': druid['hp'],
+        'fighter': fighter['hp'],
+        'immolator': immolator['hp'],
+        'paladin': paladin['hp'],
+        'ranger': ranger['hp'],
+        'thief': thief['hp'],
+        'wizard': wizard['hp'],
+    }
+    return switch.get(i)
+
 #check 
 def check(ctx):
     def inner(msg):
@@ -86,7 +102,6 @@ async def create_character(client, message):
             if i == "name":
                 await message.channel.send('What is your name ?')
                 name = await client.wait_for('message', check=check(message)) 
-                #possible update to listen to only response of player but does not seem to work
                 player_sheet["name"] = name.content
             elif i == "look":
                 await message.channel.send('Descibe your appearance.')
@@ -122,8 +137,9 @@ async def create_character(client, message):
                         valid_ans = True
                     else:
                         await message.channel.send(f'choose a valid value {starting_stats}')
+        
+        player_sheet['hitpoints'] = int(player_sheet['constitution']) + class_hp(player_sheet["class"])
 
-                
         await message.channel.send('player sheet:')
 
         collection.insert_one({
@@ -132,7 +148,7 @@ async def create_character(client, message):
             "look": player_sheet['look'],
             "class": player_sheet["class"],
             "armor": 0,
-            "hitpoints": 0, 
+            "hitpoints": player_sheet['hitpoints'], 
             "damage": player_sheet['damage'],
             "strength": player_sheet['strength'],
             "dexterity": player_sheet['dexterity'],
