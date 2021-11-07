@@ -45,6 +45,11 @@ def class_bonds(i):
         'wizard': wizard['bonds'],
     }
     return switch.get(i)
+#check 
+def check(ctx):
+    def inner(msg):
+        return msg.author == ctx.author
+    return inner
 ############ Create /create-char
 
 async def create_character(client, message):
@@ -80,12 +85,12 @@ async def create_character(client, message):
         for i in player_sheet:
             if i == "name":
                 await message.channel.send('What is your name ?')
-                name = await client.wait_for('message') 
+                name = await client.wait_for('message', check=check(message)) 
                 #possible update to listen to only response of player but does not seem to work
                 player_sheet["name"] = name.content
             elif i == "look":
                 await message.channel.send('Descibe your appearance.')
-                look = await client.wait_for('message')
+                look = await client.wait_for('message', check=check(message))
                 player_sheet['look'] = look.content
             elif i == 'armor' or i == "hitpoints" or i == "damage" or i == "bonds":
                 pass
@@ -94,7 +99,8 @@ async def create_character(client, message):
 
                 valid_ans = False
                 while valid_ans == False:
-                    response = await client.wait_for('message')
+                    #### this is how we would implement check that we need to test
+                    response = await client.wait_for('message', check=check(message))
 
                     if response.content in class_list:
                         player_sheet[i] = response.content
@@ -108,7 +114,7 @@ async def create_character(client, message):
 
                 valid_ans = False
                 while valid_ans == False:
-                    response = await client.wait_for('message')
+                    response = await client.wait_for('message', check=check(message))
 
                     if response.content in starting_stats:
                         starting_stats.pop(starting_stats.index(response.content))
@@ -176,10 +182,10 @@ async def lvl_up(client, message):
             pass
         else:
             await message.channel.send(f" would you like to update your {key}? y/n")
-            answer = await client.wait_for('message')#wait_for(message, check = check) need to define def check that checks the message.authour is == to the author who started the command. or player in our context
+            answer = await client.wait_for('message', check=check(message))
             if answer.content.upper() == 'Y':
                 await message.channel.send(f" {key}:{player_sheet[key]} should equal what?")
-                update_answer = await client.wait_for('message')
+                update_answer = await client.wait_for('message', check=check(message))
                 player_sheet[key] = update_answer.content
                 collection.replace_one({'player': player.name }, player_sheet, upsert=False)
             else:
@@ -198,21 +204,20 @@ async def bonds(client, message):
     players = []
 
     for member in guild.members:
-                
-        # if str(member.status) == 'online' and member.bot != True and member.name != player.name:
-        # temp change for dev when this is done un comment above line and remove line below
-        if member.bot != True and member.name != player.name:
-            # memb_sheet = collection.find_one({"player": member.name})
-            # players.append(str(memb_sheet["name"]))
-            # in theory I think this should work but, no one eles has character sheets for me to try with :( 
-            players.append(member.name)
+ 
+        if str(member.status) == 'online' and member.bot != True and member.name != player.name:
+        # if member.bot != True and member.name != player.name:
+            memb_sheet = collection.find_one({"player": member.name})
+            memb_name = memb_sheet["name"]
+            players.append(memb_name.lower())
+            # players.append(member.name)
 
     for i,b in enumerate(bonds):
 
         txt = f"selected a player from this list {players} for your bond: \n"
         await message.channel.send(txt + b)
 
-        response = await client.wait_for('message')
+        response = await client.wait_for('message', check=check(message))
 
         if response.content.lower() in players:
             players.pop(players.index(response.content.lower()))
@@ -230,7 +235,7 @@ async def delete_sheet(client, message):
     sheet = collection.find_one({"player": player.name}) # data is just the parsed out bit and deleteing it wont affect the db
     if sheet:
         await message.channel.send(f"are you sure you want to delete your character {sheet['name']} - Y / N ")
-        answer = await client.wait_for('message')
+        answer = await client.wait_for('message', check=check(message))
 
         if answer.content.upper() == 'Y':
             await message.channel.send('your character sheet has been destroyed')

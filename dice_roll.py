@@ -11,6 +11,13 @@ cluster = MongoClient(URI)
 db = cluster["Roll_bot"]
 collection = db["character_sheets"]
 
+# def is_same_speaker(message, player):
+#     return message.author.name == player
+def check(ctx):
+    def inner(msg):
+        return msg.author == ctx.author
+    return inner
+        
 # basic dice function 
 # needs new roll + atr function 
 async def dice(input, message):
@@ -89,10 +96,10 @@ async def roll_plus_attr(input, message):
     await message.channel.send(f"roll var: {roll} attr var: {attr}")
 
 async def roll_damage(input, message, client):
-    # def check_user(ctx):
-    #     return ctx.message.author == message.author
 
-    sheet = collection.find_one({'player': message.author.name})
+    player = message.author.name
+
+    sheet = collection.find_one({'player': player})
     dice = sheet['damage']
 
     max = int(dice.split('d', 1)[1])
@@ -100,11 +107,11 @@ async def roll_damage(input, message, client):
     rolling_txt = f"... {rolled} "
 
     await message.channel.send(f"{sheet['name']} rolled {dice} for damage \n {rolling_txt} \n do you need to roll additional dice? Y/N")
-    answer = await client.wait_for('message')
+    answer = await client.wait_for('message', check=check(message))
 
     if answer.content.upper() == 'Y':
         await message.channel.send('roll')
-        roll = await client.wait_for('message', check=lambda msg: msg.author.name == sheet["player"]) 
+        roll = await client.wait_for('message', check=check(message))
 
         num = int(float(roll.content.split('d')[0]))
         sides = int(float(roll.content.split('d')[1]))
