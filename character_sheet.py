@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 
 from printer import player_sheet_reader
-from character_classes import class_list, barbarian, bard, cleric, druid, fighter, immolator
+from character_classes import class_list, barbarian, bard, cleric, druid, fighter, immolator, paladin, ranger, thief, wizard
 
 load_dotenv()
 
@@ -24,6 +24,10 @@ def class_damage(i):
         'druid': druid['damage'],
         'fighter': fighter['damage'],
         'immolator': immolator['damage'],
+        'paladin': paladin['damage'],
+        'ranger': ranger['damage'],
+        'thief': thief['damage'],
+        'wizard': wizard['damage'],
     }
     return str(switch.get(i))
 
@@ -35,8 +39,33 @@ def class_bonds(i):
         'druid': druid['bonds'],
         'fighter': fighter['bonds'],
         'immolator': immolator['bonds'],
+        'paladin': paladin['bonds'],
+        'ranger': ranger['bonds'],
+        'thief': thief['bonds'],
+        'wizard': wizard['bonds'],
     }
-    return str(switch.get(i))
+    return switch.get(i)
+
+def class_hp(i):
+    switch = {
+        'barbarian': barbarian['hp'],
+        'bard': bard['hp'],
+        'cleric': cleric['hp'],
+        'druid': druid['hp'],
+        'fighter': fighter['hp'],
+        'immolator': immolator['hp'],
+        'paladin': paladin['hp'],
+        'ranger': ranger['hp'],
+        'thief': thief['hp'],
+        'wizard': wizard['hp'],
+    }
+    return switch.get(i)
+
+#check 
+def check(ctx):
+    def inner(msg):
+        return msg.author == ctx.author
+    return inner
 ############ Create /create-char
 
 async def create_character(client, message):
@@ -72,12 +101,11 @@ async def create_character(client, message):
         for i in player_sheet:
             if i == "name":
                 await message.channel.send('What is your name ?')
-                name = await client.wait_for('message') 
-                #possible update to listen to only response of player but does not seem to work
+                name = await client.wait_for('message', check=check(message)) 
                 player_sheet["name"] = name.content
             elif i == "look":
                 await message.channel.send('Descibe your appearance.')
-                look = await client.wait_for('message')
+                look = await client.wait_for('message', check=check(message))
                 player_sheet['look'] = look.content
             elif i == 'armor' or i == "hitpoints" or i == "damage" or i == "bonds":
                 pass
@@ -86,7 +114,8 @@ async def create_character(client, message):
 
                 valid_ans = False
                 while valid_ans == False:
-                    response = await client.wait_for('message')
+                    #### this is how we would implement check that we need to test
+                    response = await client.wait_for('message', check=check(message))
 
                     if response.content in class_list:
                         player_sheet[i] = response.content
@@ -100,7 +129,7 @@ async def create_character(client, message):
 
                 valid_ans = False
                 while valid_ans == False:
-                    response = await client.wait_for('message')
+                    response = await client.wait_for('message', check=check(message))
 
                     if response.content in starting_stats:
                         starting_stats.pop(starting_stats.index(response.content))
@@ -108,8 +137,9 @@ async def create_character(client, message):
                         valid_ans = True
                     else:
                         await message.channel.send(f'choose a valid value {starting_stats}')
+        
+        player_sheet['hitpoints'] = int(player_sheet['constitution']) + class_hp(player_sheet["class"])
 
-                
         await message.channel.send('player sheet:')
 
         collection.insert_one({
@@ -118,7 +148,7 @@ async def create_character(client, message):
             "look": player_sheet['look'],
             "class": player_sheet["class"],
             "armor": 0,
-            "hitpoints": 0, 
+            "hitpoints": player_sheet['hitpoints'], 
             "damage": player_sheet['damage'],
             "strength": player_sheet['strength'],
             "dexterity": player_sheet['dexterity'],
@@ -168,10 +198,10 @@ async def lvl_up(client, message):
             pass
         else:
             await message.channel.send(f" would you like to update your {key}? y/n")
-            answer = await client.wait_for('message')#wait_for(message, check = check) need to define def check that checks the message.authour is == to the author who started the command. or player in our context
+            answer = await client.wait_for('message', check=check(message))
             if answer.content.upper() == 'Y':
                 await message.channel.send(f" {key}:{player_sheet[key]} should equal what?")
-                update_answer = await client.wait_for('message')
+                update_answer = await client.wait_for('message', check=check(message))
                 player_sheet[key] = update_answer.content
                 collection.replace_one({'player': player.name }, player_sheet, upsert=False)
             else:
@@ -186,22 +216,42 @@ async def bonds(client, message):
     sheet = collection.find_one({"player": player.name})
 
     bonds = class_bonds(sheet["class"])
-    
-    first_txt = ""
-    for b in bonds.split(','): # not a great way to do this. instead bonds should be lists and entered into the char sheet as a list
+    guild = client.get_guild(player.guild.id)
+    players = []
 
-        first_txt = first_txt + b + '\n'
+    for member in guild.members:
+ 
+        if str(member.status) == 'online' and member.bot != True and member.name != player.name:
+        # if member.bot != True and member.name != player.name:
+            memb_sheet = collection.find_one({"player": member.name})
+            memb_name = memb_sheet["name"]
+            players.append(memb_name.lower())
+            # players.append(member.name)
 
-    await message.channel.send(f"{first_txt}")
+    for i,b in enumerate(bonds):
+
+        txt = f"selected a player from this list {players} for your bond: \n"
+        await message.channel.send(txt + b)
+
+        response = await client.wait_for('message', check=check(message))
+
+        if response.content.lower() in players:
+            players.pop(players.index(response.content.lower()))
+            bonds[i] = bonds[i].replace('character-name', response.content)
+
+    sheet['bonds'] = bonds
+    collection.replace_one({'player': player.name }, sheet, upsert=False)
+    await player_sheet_reader(message, sheet)
+
     
-############## Delete /delete-character
+############## Delete /delete-character/
 
 async def delete_sheet(client, message):
     player = message.author
     sheet = collection.find_one({"player": player.name}) # data is just the parsed out bit and deleteing it wont affect the db
     if sheet:
         await message.channel.send(f"are you sure you want to delete your character {sheet['name']} - Y / N ")
-        answer = await client.wait_for('message')
+        answer = await client.wait_for('message', check=check(message))
 
         if answer.content.upper() == 'Y':
             await message.channel.send('your character sheet has been destroyed')

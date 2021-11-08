@@ -1,60 +1,102 @@
-class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator' ]
+class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator', 'paladin', 'ranger', 'thief', 'wizard' ]
 
-char_one = "_b_l_a_n_k_"
-char_two = "_b_l_a_n_k_"
-char_three = "_b_l_a_n_k_"
-char_four = "_b_l_a_n_k_"
 
 barbarian = {
+    'hp': 8,
     'damage': 'd10',
     'bonds': [
-        f"{char_one} is puny and foolish, but amusing to me.", 
-        f"{char_two}'s ways are strange and confusing.", 
-        f"{char_three} is always getting into trouble - I must protect them from themselves.",
-        f"{char_four} shares my hunger for glory; the earth will tremble at our passing!",
+        "character-name is puny and foolish, but amusing to me.", 
+        "character-name's ways are strange and confusing.", 
+        "character-name is always getting into trouble - I must protect them from themselves.",
+        "character-name shares my hunger for glory; the earth will tremble at our passing!",
     ],
 }
 bard = {
+    'hp': 6,
     'damage': 'd6',
     'bonds' : [
-        "This is not my first adventure with _____.",
-        "I sang stories of _____ long before i ever met them in person.",
-        "_____ is often the butt of my jokes.",
-        "I am writting a ballad about the adventures of _____."
+        "This is not my first adventure with character-name.",
+        "I sang stories of character-name long before i ever met them in person.",
+        "character-name is often the butt of my jokes.",
+        "I am writting a ballad about the adventures of character-name."
     ],
 }
 cleric = {
+    'hp': 8,
     'damage': 'd6',
     'bonds' : [
-        "_____ has insluted my deity; I do ot trust them.",
-        "_____ is a good and faithful person; I trust them implicity",
-        "_____ is in constant danger, I will keep them safe.",
-        "I am working on converting _____ to my faith."
+        "character-name has insluted my deity; I do ot trust them.",
+        "character-name is a good and faithful person; I trust them implicity",
+        "character-name is in constant danger, I will keep them safe.",
+        "I am working on converting character-name to my faith."
     ],
 }
 druid = {
+    'hp': 6,
     'damage': 'd6',
     'bonds': [
-        "_____ smells more like prey than a hunter.",
-        "The spirits spoke to me of a great danger that follows _____.",
-        "I have shown _____ a secret rite of the land.",
-        "_____ has tasted my blood and I theirs. We are bound by it."
+        "character-name smells more like prey than a hunter.",
+        "The spirits spoke to me of a great danger that follows character-name.",
+        "I have shown character-name a secret rite of the land.",
+        "character-name has tasted my blood and I theirs. We are bound by it."
     ],
 }
 fighter = {
+    'hp': 10,
     'damage': 'd10',
     'bonds': [
-        "_____ owes me their life, whether they admit it or not.",
-        "I have sworn to protect _____",
-        "I worry about the ability of _____ to survice in the dungeon",
-        "_____ is soft, but I will make them hard like me"
+        "character-name owes me their life, whether they admit it or not.",
+        "I have sworn to protect character-name",
+        "I worry about the ability of character-name to survice in the dungeon",
+        "character-name is soft, but I will make them hard like me"
     ]
 }
 immolator = {
+    'hp': 4,
     'damage': 'd8',
     'bonds': [
-        "_____ has felt the hellish touch of fire, now they know my strength.",
-        "I will teach _____ the true meaning of sacrifice.",
-        "I cast somthing into the fire for _____ and still owe them their due."
+        "character-name has felt the hellish touch of fire, now they know my strength.",
+        "I will teach character-name the true meaning of sacrifice.",
+        "I cast somthing into the fire for character-name and still owe them their due."
+    ]
+}
+paladin = {
+    'hp': 10,
+    'damage': 'd10',
+    'bonds': [
+        "character-name's misguided behavior endangers their very soul!",
+        "character-name has stoof by me in battle and can be trusted completely.",
+        "I respect the beliefs of character-name but hope they someday see the true way.",
+        "character-name is a brave soul, I have much to learn from them"
+    ]
+}
+ranger = {
+    'hp': 8,
+    'damage': 'd8',
+    'bonds': [
+        "I have guided character-name before and they owe me for it.",
+        "character-name is a friend of nature, so I will be their friend as well.",
+        "character-name has no respect for nature so I have no respect for them.",
+        "character-name does not understand life in the wild so I will teach them"
+    ]
+}
+thief = {
+    'hp': 6,
+    'damage': 'd8',
+    'bonds': [
+        "I stole something from character-name",
+        "character-name has my back when things go wrong",
+        "character-name knows incriminating details about me.",
+        "character-name and I have a con running"
+    ]
+}
+wizard = {
+    'hp': 4,
+    'damage': 'd4',
+    'bonds': [
+        "character-name will play an important role in the events to come. I have seen it!",
+        "character-name is keeping an immportant secret from me.",
+        "character-name is woefully misinformed about the world; I will teach them all that I can.",
+        
     ]
 }
