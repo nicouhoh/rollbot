@@ -10,6 +10,63 @@ barbarian = {
         "character-name is always getting into trouble - I must protect them from themselves.",
         "character-name shares my hunger for glory; the earth will tremble at our passing!",
     ],
+    'starting-gear': [
+        {
+            "name":"dungeon rations",
+            "info": "gear",
+            "uses": 5, 
+            "weight":1 
+        },
+        {
+            "name":"dagger",
+            "info": "weapon",
+            "attr": ["hand"],
+            "damage": 0,
+            "weight": 1
+        },
+        {
+            "name": "Token",
+            "info": "special-item",
+            "prompt": "A token of where you've traveled or where you are from.",
+            "description": ""
+        },
+        [ 
+            {
+                "name":"Axe",
+                "info": "weapon",
+                "attr": ["close"],
+                "damage": 0,
+                "weight": 1
+            },
+            {
+                "name":"Two-handed Sword",
+                "info": "weapon",
+                "attr": ["close"],
+                "damage": 1,
+                "weight": 2
+            }
+        ],
+        [
+            {
+            "name": "Adventuring Gear", 
+            "info": "gear",
+            "uses": 5, 
+            "weight":1 
+            },
+            {
+            "name": "Chainmail", 
+            "info": "armor",
+            "armor": 1, 
+            "weight":1  
+            }
+        ]
+    ] 
+    # we are going to try loop over the starting gear and push anything that is not an array 
+    # to the players sheet["inventory"], 
+    # if the index is an array we will ask the player to choose between the items. 
+    # based on the value of info we can ask for imformation as needed, ie with the Token will prompt the user to describe the item 
+    #  then push that object with the response as the description to the players inventory.
+
 }
 bard = {
     'hp': 6,
