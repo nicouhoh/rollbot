@@ -1,5 +1,16 @@
 class_list = ['barbarian', 'bard', 'cleric', 'druid', 'fighter', 'immolator', 'paladin', 'ranger', 'thief', 'wizard' ]
 
+# basic model of our item data 
+
+# item = {
+#     'name': 'name',
+#     'type': "weapon", # weapon, armor, special-item, spendable
+#     "info": { # info is fields specific to the type
+#         "attr": [], # list of weaspon attributes 
+#         "dmg": 1, # positive int damage modifer
+#     },
+#     'weight': 1 
+# }
 
 barbarian = {
     'hp': 8,
