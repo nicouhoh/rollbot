@@ -12,13 +12,13 @@ barbarian = {
     ],
     'starting-gear': [
         {
-            "name":"dungeon rations",
+            "name":"Dungeon rations",
             "info": "gear",
             "uses": 5, 
             "weight":1 
         },
         {
-            "name":"dagger",
+            "name":"Dagger",
             "info": "weapon",
             "attr": ["hand"],
             "damage": 0,

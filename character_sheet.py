@@ -108,7 +108,6 @@ async def create_character(client, message):
             "inventory":[]
             }
 
-        # starting_stats = ['16(+2)','15(+1)','13(+1)','12(-)', '9(-)', '8(-1)']
         starting_stats = ['16','15','13','12', '9', '8']
 
         await message.channel.send('Hello Traveler')
