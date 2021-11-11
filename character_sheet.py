@@ -61,6 +61,20 @@ def class_hp(i):
     }
     return switch.get(i)
 
+def class_gear(i):
+    switch = {
+        'barbarian': barbarian["starting-gear"],
+        # 'bard': bard["starting-gear"],
+        # 'cleric': cleric["starting-gear"],
+        # 'druid': druid["starting-gear"],
+        # 'fighter': fighter["starting-gear"],
+        # 'immolator': immolator["starting-gear"],
+        # 'paladin': paladin["starting-gear"],
+        # 'ranger': ranger["starting-gear"],
+        # 'thief': thief["starting-gear"],
+        # 'wizard': wizard["starting-gear"],
+    }
+    return switch.get(i)
 #check 
 def check(ctx):
     def inner(msg):
@@ -90,10 +104,10 @@ async def create_character(client, message):
             "inteligence": 0,
             "wisdom": 0,
             "charisma": 0,
-            "bonds": []
+            "bonds": [],
+            "inventory":[]
             }
 
-        # starting_stats = ['16(+2)','15(+1)','13(+1)','12(-)', '9(-)', '8(-1)']
         starting_stats = ['16','15','13','12', '9', '8']
 
         await message.channel.send('Hello Traveler')
@@ -107,7 +121,7 @@ async def create_character(client, message):
                 await message.channel.send('Descibe your appearance.')
                 look = await client.wait_for('message', check=check(message))
                 player_sheet['look'] = look.content
-            elif i == 'armor' or i == "hitpoints" or i == "damage" or i == "bonds":
+            elif i == 'armor' or i == "hitpoints" or i == "damage" or i == "bonds" or i == "inventory":
                 pass
             elif i == "class":
                 await message.channel.send(f" choose your character's class from this list: {class_list}")
@@ -140,6 +154,41 @@ async def create_character(client, message):
         
         player_sheet['hitpoints'] = int(player_sheet['constitution']) + class_hp(player_sheet["class"])
 
+        inventory = class_gear(player_sheet["class"])
+
+        for i in inventory:
+            if type(i) == list:
+                item_check = []
+                base_txt = "choose one of these item: \n ------------ \n "
+                for c in i: 
+                    base_txt = base_txt + f" - {c['name']} \n"
+                    item_check.append(c["name"])
+
+                await message.channel.send(base_txt)
+                item = await client.wait_for("message", check=check(message))
+                valid_ans = False
+                while valid_ans == False:
+                    if item.content in item_check:
+                        player_sheet['inventory'].append(i[item_check.index(item.content)])
+                        await message.channel.send(f"{i[item_check.index(item.content)]['name']} has been added to your inventory")
+                        valid_ans = True
+                    else:
+                        await message.channel.send("chose a valid item")
+                        item = await client.wait_for("message", check=check(message))
+            elif i["info"] == "special-item":
+
+                await message.channel.send(f" Your {i['name']} is {i['prompt']}, describe it.")
+                description = await client.wait_for("message", check=check(message))
+
+                i["description"] = description.content
+                player_sheet["inventory"].append(i)
+
+            else: 
+                player_sheet['inventory'].append(i)
+                await message.channel.send(f" { i['name'] } has been added to your inventory")
+
+
+        # print finished player-sheet
         await message.channel.send('player sheet:')
 
         collection.insert_one({
@@ -157,6 +206,7 @@ async def create_character(client, message):
             "wisdom": player_sheet['wisdom'],
             "charisma": player_sheet['charisma'],
             "bonds" : player_sheet['bonds'],
+            "inventory": player_sheet["inventory"]
             })
 
         sheet = collection.find_one({"player" : player})
